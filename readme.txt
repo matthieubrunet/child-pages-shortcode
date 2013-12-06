@@ -1,10 +1,10 @@
 === Child Pages Shortcode ===
-Contributors: miyauchi
+Contributors: miyauchi - forked by Matthieu Brunet
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=FR7RD5SGEU69Y
 Tags: shortcode
 Requires at least: 3.4
 Tested up to: 3.7
-Stable tag: 1.8.0
+Stable tag: 1.0.0
 
 You can use shortcode for display child pages from the page.
 
@@ -20,10 +20,18 @@ You can use shortcode for display child pages from the page.
 * You can customize default HTML template on your plugin.
 * This plugin will be able to "excerpt" to the pages.
 
+The fork add the following features :
+* class parameter to specify the main div class
+* template_file to specify a particular template file
+* new %post_content% replacement tag to display the full content instead of the excerpt
+* add the childPages function to be used as the template tag
+
 = Example =
 
 Display child pages of the current page.
 `[child_pages width="33%"]`
+Template tag :
+childPages(array("id"=>3, "size"=>"25%", "width"=>"thumbs", "class"=>"my-child-page-class", "template_file"=>"my_template_file.php");
 
 
 = Args =
@@ -33,6 +41,8 @@ Display child pages of the current page.
 * width - width of block for child pages.
 * disable_shortcode - Shortcode not work in the template if set true.
 * disable_excerpt_filters - filters not work for the excerpt if set true.
+* class - specify the class of the parent div
+* template_file - specify a template file located in the theme directory
 
 = filter hooks example =
 
@@ -88,7 +98,7 @@ Default Template
     </div>
 </div>`
 
-Template valiables
+Template variables
 
 * %post_id% - ID of the Page
 * %width% - Width of block for single page
@@ -96,15 +106,13 @@ Template valiables
 * %post_thumb% - <img> for Post thubmail
 * %post_title% - Page title
 * %post_excerpt% - Page excerpt
+* %post_content% - Page content
 
-= Support =
-
-* http://wpist.me/wp/child-pages-shortcode/ (en)
-* http://firegoby.theta.ne.jp/wp/child-pages-shortcode (ja)
 
 = Contributors =
 
 * [Takayuki Miyauchi](http://wpist.me/)
+* [Matthieu Brunet](http://www.brunet.fr)
 
 == Installation ==
 
@@ -114,53 +122,5 @@ Template valiables
 
 == Changelog ==
 
-= 1.7.0 =
-* bug fix - missing wp_reset_postdata()
-
-= 1.6.0 =
-* bug fix
-
-= 1.3.0 =
-* setup_postdata() added.
-
-= 1.2.0 =
-* bug fix
-
-= 1.1.4 =
-* bug fix on non-responsive theme
-
-= 1.1.3 =
-* Bug fix
-
-= 1.1.2 =
-* Bug fix
-
-= 1.0.1 =
-* Add filter hook "child-pages-shortcode-output"
-
-= 0.9.0 =
-* Add filter hook "child-pages-shortcode-query" 
-* Load stylesheet by wp_enqueue_style()
-
-= 0.8.0 =
-* Add style "max-width:100%".
-
-= 0.4.0 =
-* add `add_post_type_support("page", "excerpt");`
-
-= 0.3.0 =
-* Adapt to no-image.
-
-= 0.1.0 =
-* The first release.
-
-== Credits ==
-
-This plug-in is not guaranteed though the user of WordPress can freely use this plug-in free of charge regardless of the purpose.
-The author must acknowledge the thing that the operation guarantee and the support in this plug-in use are not done at all beforehand.
-
-== Contact ==
-
-* http://wpist.me/
-* [@wpist_me](https://twitter.com/#!/wpist_me)
+1.0.0 first version of the fork
 
