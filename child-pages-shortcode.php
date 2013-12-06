@@ -1,10 +1,10 @@
 <?php
 /*
-Plugin Name: Child Pages Shortcode
-Author: Takayuki Miyauchi
+Plugin Name: Child Pages Shortcode 2
+Author: Takayuki Miyauchi - Fork by Matthieu Brunet
 Plugin URI: http://wpist.me/wp/child-pages-shortcode/
-Description: You can use shortcode for display child pages from the page.
-Version: 1.8.0
+Description: You can use shortcode for display child pages from the page. Fork to add the possibility of displaying full content instead of excerpt
+Version: 1.0.0
 Author URI: http://wpist.me/
 Domain Path: /languages
 Text Domain: child-pages-shortcode
@@ -14,11 +14,11 @@ new childPagesShortcode();
 
 class childPagesShortcode {
 
-private $ver = '1.1.4';
+private $ver = '1.0.0';
 
 function __construct()
 {
-    add_shortcode("child_pages", array(&$this, "shortcode"));
+    add_shortcode("child_pages", array(&$this, "child_pages_func"));
     add_action("init", array(&$this, "init"));
     add_action("wp_enqueue_scripts", array(&$this, "wp_enqueue_scripts"));
     add_filter("plugin_row_meta", array(&$this, "plugin_row_meta"), 10, 2);
@@ -49,7 +49,7 @@ public function wp_enqueue_scripts()
         plugins_url("script.js", __FILE__)
     );
     wp_register_script(
-        'child-pages-shortcode',
+        'child-pages-shortcode2',
         $js,
         array('jquery'),
         $this->ver,
@@ -58,7 +58,7 @@ public function wp_enqueue_scripts()
     wp_enqueue_script('child-pages-shortcode');
 }
 
-public function shortcode($p, $template = null)
+public function child_pages_func($p, $template = null)
 {
 	if( !isset($p['id']) || !intval($p['id']) ){
 		$p['id'] = get_the_ID();
@@ -68,6 +68,9 @@ public function shortcode($p, $template = null)
     }
     if (!isset($p['width']) || !intval($p['width'])) {
         $p['width'] = "50%";
+    }
+    if ( empty($p["class"]) ) {
+	    $p["class"] = "child_pages";
     }
     if (!isset($p['disable_shortcode']) || !$p['disable_shortcode']) {
         add_filter("child-pages-shortcode-output", "do_shortcode");
@@ -89,6 +92,13 @@ private function display($p, $block_template)
             'child-pages-shortcode-template',
             $template,
             $p
+        );
+    } elseif ( isset($p["template_file"]) && file_exists(get_template_directory() . "/" . $p["template_file"]) ) {
+    	$template = file_get_contents(get_template_directory() . "/" . $p["template_file"]);
+        $html = sprintf(
+            '<div class="%s child_pages-%s">',
+            esc_attr($p['class']),
+            esc_attr($p['size'])
         );
     } else {
         $template = apply_filters(
@@ -130,13 +140,18 @@ private function display($p, $block_template)
         } else {
             $tpl = str_replace('%post_excerpt%', get_the_excerpt(), $tpl);
         }
+        if (isset($p['disabled_excerpt_filters']) && $p['disabled_excerpt_filters']) {
+            $tpl = str_replace('%post_content%', $post->content, $tpl);
+        } else {
+            $tpl = str_replace('%post_content%', get_the_content(), $tpl);
+        }
         $html .= $tpl;
     }
 
     wp_reset_postdata();
 
     if (!$block_template) {
-        $html .= '</div>';
+        $html .= '<hr style="border:0px; clear:both;"></div>';
     }
 
     return apply_filters("child-pages-shortcode-output", $html);
@@ -175,6 +190,14 @@ public function plugin_row_meta($links, $file)
     return $links;
 }
 
-} // end childPagesShortcode()
+} // end childPagesShortcode2()
+
+// Template tag
+// $p = array("id"=>"", "size"=>"","width"=>"","class"=>"", "template_file"=>"")
+function childPages($p)
+{
+	$childpages = new childPagesShortcode2();
+	return $childpages->child_pages2_func($p);
+}
 
 // eof
